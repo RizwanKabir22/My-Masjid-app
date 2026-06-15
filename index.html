@@ -1,0 +1,1561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Masjid</title>
+<link rel="icon" type="image/png" href="logo-mm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,450;14..32,500;14..32,600;14..32,650&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS — quiet, light, typography-led
+============================================================ */
+:root{
+  --bg:#FBFCFB;
+  --card:#FFFFFF;
+  --ink:#1B2B25;
+  --ink-2:#44564E;
+  --muted:#8A9A91;
+  --faint:#B9C6BF;
+  --line:#ECF1ED;
+  --line-2:#E1E9E3;
+  --accent:#3E9C74;
+  --accent-deep:#2E7A59;
+  --accent-soft:#EDF7F1;
+  --sand:#C29464;
+  --sand-soft:#F9F3EB;
+  --lavender:#8B7BC7;
+  --shadow-xs:0 1px 2px rgba(27,43,37,.04);
+  --shadow-sm:0 1px 2px rgba(27,43,37,.03),0 8px 24px rgba(27,43,37,.05);
+  --shadow-float:0 2px 8px rgba(27,43,37,.06),0 24px 56px rgba(27,43,37,.12);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ease-sheet:cubic-bezier(.32,.72,0,1);
+  --spring:cubic-bezier(.3,1.36,.44,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+button{font:inherit;border:0;background:none;cursor:pointer;color:inherit;text-align:left}
+input{font:inherit;border:0;outline:none;background:none;color:inherit;min-width:0}
+
+/* ============================================================
+   STAGE
+============================================================ */
+body{
+  font-family:'Inter',-apple-system,sans-serif;
+  font-feature-settings:"cv11","ss01";
+  background:#EEF1EE;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:16px;color:var(--ink);overflow:hidden;
+}
+
+/* ============================================================
+   PHONE
+============================================================ */
+.phone{
+  width:390px;height:844px;border-radius:55px;background:#121814;padding:11px;
+  box-shadow:0 60px 120px rgba(17,24,27,.28),0 8px 24px rgba(17,24,27,.14);
+  position:relative;flex-shrink:0;
+}
+.phone .notch{
+  position:absolute;top:23px;left:50%;transform:translateX(-50%);
+  width:112px;height:32px;border-radius:18px;background:#121814;z-index:60;
+}
+.screen{
+  width:100%;height:100%;border-radius:45px;background:var(--bg);
+  overflow:hidden;position:relative;
+}
+.statusbar{
+  position:absolute;top:0;left:0;right:0;height:54px;z-index:55;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  padding:0 32px 5px;font-size:13.5px;font-weight:600;pointer-events:none;
+  letter-spacing:-.01em;
+}
+
+/* ============================================================
+   VIEWS & MOTION
+============================================================ */
+.view{
+  position:absolute;inset:0;background:var(--bg);
+  opacity:0;pointer-events:none;transform:translateY(10px) scale(.992);
+  transition:opacity .45s var(--ease-out),transform .55s var(--ease-out);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.view.active{opacity:1;transform:none;pointer-events:auto}
+.scroll{flex:1;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.active .st>*{opacity:0;animation:rise .6s var(--ease-out) both}
+.active .st>*:nth-child(1){animation-delay:.04s}.active .st>*:nth-child(2){animation-delay:.09s}
+.active .st>*:nth-child(3){animation-delay:.14s}.active .st>*:nth-child(4){animation-delay:.19s}
+.active .st>*:nth-child(5){animation-delay:.24s}.active .st>*:nth-child(6){animation-delay:.29s}
+.active .st>*:nth-child(7){animation-delay:.34s}.active .st>*:nth-child(8){animation-delay:.39s}
+.active .st>*:nth-child(9){animation-delay:.44s}.active .st>*:nth-child(10){animation-delay:.49s}
+.active .st>*:nth-child(11){animation-delay:.54s}.active .st>*:nth-child(12){animation-delay:.59s}
+
+/* ============================================================
+   SHARED
+============================================================ */
+.appbar{display:flex;align-items:center;gap:6px;padding:64px 16px 8px}
+.icon-btn{
+  width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:var(--ink);transition:.3s var(--spring);
+}
+.icon-btn:hover{background:#fff}
+.icon-btn:active{transform:scale(.88)}
+.appbar .title{font-size:16px;font-weight:600;letter-spacing:-.02em;flex:1}
+.caps{
+  font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);
+}
+.section-caps{margin:26px 28px 6px}
+.hairline{height:1px;background:var(--line);margin:0 28px}
+
+/* ============================================================
+   WELCOME
+============================================================ */
+.hero-pad{padding:96px 28px 0}
+.brandrow{display:flex;align-items:center;gap:9px;margin-bottom:40px}
+.brandrow .bm{
+  width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+}
+.bm img{width:100%;height:100%;object-fit:contain;display:block}
+.brandrow span{font-size:13.5px;font-weight:600;letter-spacing:-.01em}
+.salam{font-family:'Instrument Serif',serif;font-style:italic;font-size:17px;color:var(--sand)}
+.hero-pad h2{
+  font-size:34px;font-weight:600;letter-spacing:-.035em;line-height:1.12;margin:10px 0 12px;
+}
+.hero-pad h2 em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--accent);letter-spacing:-.01em}
+.hero-pad .sub{font-size:14px;color:var(--muted);line-height:1.55;font-weight:450;max-width:280px}
+.search{
+  margin:30px 28px 0;display:flex;align-items:center;gap:11px;
+  background:#fff;border:1px solid var(--line-2);border-radius:99px;padding:14px 20px;
+  transition:.3s var(--ease-out);box-shadow:var(--shadow-xs);
+}
+.search:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.search input{flex:1;font-size:14.5px;font-weight:450}
+.search input::placeholder{color:var(--faint)}
+.locate{
+  margin:10px 28px 0;display:inline-flex;align-items:center;gap:7px;
+  font-size:13px;font-weight:550;color:var(--accent-deep);padding:10px 2px;
+  transition:.25s;
+}
+.locate:active{opacity:.5}
+.country-list{padding:2px 28px 40px}
+.row-line{
+  display:flex;align-items:center;gap:14px;width:100%;padding:15px 0;
+  border-bottom:1px solid var(--line);transition:.25s;
+}
+.row-line:last-child{border-bottom:0}
+.row-line:active{opacity:.55}
+.row-line .flag{font-size:21px;width:28px;text-align:center}
+.row-line .meta{flex:1}
+.row-line .meta b{display:block;font-size:14.5px;font-weight:550;letter-spacing:-.01em}
+.row-line .meta span{font-size:12px;color:var(--muted);font-weight:450;margin-top:1px;display:block}
+.row-line .chev{color:var(--faint);display:flex}
+
+/* ============================================================
+   MASJID PICKER
+============================================================ */
+.masjid-list{padding:4px 28px 130px}
+.m-row{
+  display:flex;align-items:center;gap:14px;width:100%;padding:16px 0;
+  border-bottom:1px solid var(--line);transition:.25s;
+}
+.m-row:active{opacity:.6}
+.m-avatar{
+  width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:600;font-size:13px;flex-shrink:0;background:var(--accent-soft);color:var(--accent-deep);
+  letter-spacing:.02em;transition:.35s var(--spring);
+}
+.m-row .meta{flex:1;min-width:0}
+.m-row .meta b{display:block;font-size:14.5px;font-weight:550;letter-spacing:-.01em}
+.m-row .meta span{display:block;font-size:12px;color:var(--muted);font-weight:450;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.radio{
+  width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line-2);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:.35s var(--spring);color:#fff;
+}
+.m-row.sel .radio{background:var(--ink);border-color:var(--ink)}
+.radio svg{opacity:0;transform:scale(.3);transition:.3s var(--spring)}
+.m-row.sel .radio svg{opacity:1;transform:scale(1)}
+.m-row.sel .m-avatar{background:var(--ink);color:#fff}
+.cta-dock{
+  position:absolute;bottom:0;left:0;right:0;padding:18px 28px 38px;
+  background:linear-gradient(transparent,var(--bg) 45%);z-index:20;
+}
+.cta{
+  width:100%;padding:16px;border-radius:99px;background:var(--ink);color:#fff;
+  font-size:14.5px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:.35s var(--spring);letter-spacing:-.01em;
+}
+.cta:hover{background:#2A4237}
+.cta:active{transform:scale(.97)}
+.cta:disabled{opacity:.3;pointer-events:none}
+
+/* ============================================================
+   HOME
+============================================================ */
+.home-bar{display:flex;align-items:center;padding:64px 18px 4px}
+.home-bar .where{flex:1;padding-left:6px}
+.home-bar .where .caps{display:block}
+.home-bar .where b{display:inline-flex;align-items:center;gap:5px;font-size:15.5px;font-weight:600;letter-spacing:-.02em;margin-top:2px}
+.bell-dot{position:relative}
+.bell-dot::after{
+  content:"";position:absolute;top:9px;right:10px;width:6px;height:6px;border-radius:50%;
+  background:var(--sand);
+}
+
+/* tracker — soft gradient card */
+.tracker{
+  margin:14px 20px 0;padding:17px 20px 15px;border-radius:26px;
+  background:linear-gradient(130deg,#EDF7F0 0%,#FAFCFA 55%,#F7F1E7 135%);
+  border:1px solid #E1EDE5;
+  box-shadow:0 1px 2px rgba(27,43,37,.03),0 12px 32px rgba(62,156,116,.08);
+  position:relative;overflow:hidden;
+}
+.tracker::before{
+  content:"";position:absolute;width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(62,156,116,.10),transparent 65%);
+  top:-90px;right:-40px;pointer-events:none;
+}
+.t-head{display:flex;align-items:baseline;margin-bottom:14px;position:relative}
+.t-head .caps{color:var(--ink-2)}
+.t-head .count{
+  margin-left:8px;font-size:11px;font-weight:650;color:var(--accent-deep);
+  font-variant-numeric:tabular-nums;background:#fff;border:1px solid #DBEAE0;
+  padding:2px 8px;border-radius:99px;
+}
+.t-head button{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--accent-deep);display:flex;align-items:center;gap:2px}
+.t-head button:active{opacity:.5}
+.t-nodes{display:flex;align-items:flex-start}
+.t-node{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:7px;width:40px}
+.t-link{flex:1;height:1px;margin-top:19px;background:var(--line-2);position:relative}
+.t-link::after{
+  content:"";position:absolute;inset:0;background:var(--accent);
+  transform:scaleX(0);transform-origin:left;transition:transform .6s var(--ease-out);
+}
+.t-link.fill::after{transform:scaleX(1)}
+.t-dot{
+  width:38px;height:38px;border-radius:50%;border:1.5px solid #D8E6DC;background:#fff;
+  display:flex;align-items:center;justify-content:center;color:var(--faint);
+  transition:.4s var(--spring);box-shadow:0 1px 3px rgba(27,43,37,.05);
+}
+.t-dot:active{transform:scale(.82)}
+.t-dot.home{border-color:var(--sand);background:var(--sand-soft);color:var(--sand)}
+.t-dot.masjid{border-color:var(--accent);background:var(--accent);color:#fff}
+@keyframes pop{0%{transform:scale(.7)}55%{transform:scale(1.14)}100%{transform:scale(1)}}
+.t-dot.pop{animation:pop .5s var(--spring)}
+.t-node span{font-size:9.5px;font-weight:550;color:var(--faint);letter-spacing:.04em}
+.t-node .done-lbl{color:var(--ink-2)}
+
+/* countdown — pure typography */
+.cd-block{padding:30px 28px 0;text-align:center}
+.cd-block .caps{color:var(--muted)}
+.cd-big{
+  font-size:74px;font-weight:300;letter-spacing:-.045em;line-height:1;
+  font-variant-numeric:tabular-nums;margin-top:14px;color:var(--ink);
+  font-optical-sizing:auto;
+}
+.cd-big .sep{color:var(--faint);font-weight:300}
+.cd-sub{font-size:13px;color:var(--muted);font-weight:450;margin-top:10px}
+.cd-sub b{color:var(--ink-2);font-weight:550}
+.cd-track{
+  height:2px;background:var(--line);border-radius:2px;margin:24px 0 0;position:relative;overflow:visible;
+}
+.cd-track .fill{
+  position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:2px;
+  transition:width 1s linear;
+}
+.cd-track .dot{
+  position:absolute;top:50%;width:8px;height:8px;border-radius:50%;background:var(--accent);
+  transform:translate(-50%,-50%);transition:left 1s linear;
+  box-shadow:0 0 0 4px var(--accent-soft);
+}
+.cd-stats{display:flex;margin-top:22px;border-top:1px solid var(--line)}
+.cd-stat{flex:1;padding:16px 0 0;text-align:center;position:relative}
+.cd-stat+.cd-stat::before{content:"";position:absolute;left:0;top:16px;bottom:2px;width:1px;background:var(--line)}
+.cd-stat .caps{font-size:9.5px}
+.cd-stat .v{font-size:17px;font-weight:550;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums}
+
+/* date row */
+.date-row{
+  display:flex;align-items:center;margin:30px 28px 0;padding:14px 0;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.date-row .arrow{
+  width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:var(--muted);transition:.3s var(--spring);
+}
+.date-row .arrow:active{transform:scale(.85);background:var(--line)}
+.date-row .d-mid{flex:1;text-align:center}
+.date-row .d-mid b{display:block;font-size:14px;font-weight:600;letter-spacing:-.01em}
+.date-row .d-mid span{font-size:11.5px;color:var(--muted);font-weight:450;margin-top:2px;display:block}
+.live-dot{
+  display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--accent);margin-left:6px;
+  animation:pulse 2s infinite;vertical-align:2px;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* prayer rows */
+.ptable{padding:6px 28px 120px}
+.p-cols{
+  display:grid;grid-template-columns:1fr 78px 78px;padding:16px 0 10px;
+}
+.p-cols .caps:nth-child(2),.p-cols .caps:nth-child(3){text-align:right}
+.prow{
+  display:grid;grid-template-columns:1fr 78px 78px;align-items:center;
+  padding:15px 0;border-bottom:1px solid var(--line);position:relative;
+}
+.prow:last-child{border-bottom:0}
+.prow .nm{font-size:15px;font-weight:550;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}
+.prow .nm .mark{width:5px;height:5px;border-radius:50%;background:transparent;flex-shrink:0;margin-left:-14px}
+.prow .tm{font-size:15px;font-weight:450;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.prow .tm b{font-weight:550;color:var(--ink)}
+.prow.now .nm{color:var(--accent-deep)}
+.prow.now .nm .mark{background:var(--accent)}
+.prow.now .tm b{color:var(--accent-deep)}
+.prow.dim .nm{color:var(--muted);font-weight:450}
+
+/* bottom nav — floating pill */
+.bottomnav{
+  position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:35;
+  display:flex;align-items:center;gap:2px;
+  padding:7px 9px;background:rgba(255,255,255,.94);backdrop-filter:blur(24px);
+  border:1px solid var(--line);border-radius:99px;
+  box-shadow:0 2px 6px rgba(28,42,48,.05),0 16px 36px rgba(28,42,48,.10);
+  transition:transform .55s var(--ease-out),opacity .4s var(--ease-out);
+}
+.bottomnav.hide{opacity:0;transform:translateX(-50%) translateY(90px);pointer-events:none}
+.bn{
+  display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9px;font-weight:550;
+  letter-spacing:.02em;color:var(--faint);padding:7px 15px;border-radius:99px;
+  transition:.35s var(--spring);
+}
+.bn:active{transform:scale(.88)}
+.bn.on{color:var(--ink);background:var(--bg)}
+.bn svg{transition:.3s}
+
+/* ============================================================
+   DRAWER
+============================================================ */
+.scrim{
+  position:absolute;inset:0;background:rgba(28,42,48,.32);z-index:40;
+  opacity:0;pointer-events:none;transition:opacity .4s;
+}
+.scrim.show{opacity:1;pointer-events:auto}
+.drawer{
+  position:absolute;top:0;bottom:0;left:0;width:300px;background:var(--bg);z-index:45;
+  transform:translateX(-103%);transition:transform .5s var(--ease-out);
+  display:flex;flex-direction:column;box-shadow:var(--shadow-float);
+}
+.drawer.show{transform:none}
+.d-head{padding:84px 30px 26px}
+.d-head .bm{
+  width:44px;height:44px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;
+}
+.d-head b{font-size:17px;font-weight:600;letter-spacing:-.02em}
+.d-head p{font-size:12px;color:var(--muted);margin-top:3px;font-weight:450}
+.d-masjid{
+  margin:0 22px;background:#fff;border:1px solid var(--line-2);
+  border-radius:18px;padding:13px 15px;display:flex;align-items:center;gap:12px;width:calc(100% - 44px);
+  transition:.3s var(--spring);box-shadow:var(--shadow-xs);
+}
+.d-masjid:active{transform:scale(.97)}
+.d-masjid .m-avatar{width:36px;height:36px;font-size:11px}
+.d-masjid .meta b{display:block;font-size:13px;font-weight:600;letter-spacing:-.01em}
+.d-masjid .meta span{font-size:11px;color:var(--accent-deep);font-weight:550}
+.d-items{flex:1;overflow-y:auto;padding:18px 30px;scrollbar-width:none}
+.d-item{
+  display:flex;align-items:center;gap:15px;width:100%;padding:13px 0;
+  font-size:14px;font-weight:500;color:var(--ink-2);transition:.2s;letter-spacing:-.01em;
+}
+.d-item:active{opacity:.5}
+.d-item .di{width:20px;color:var(--muted);display:flex}
+.d-item .bdg{
+  margin-left:auto;font-size:9px;font-weight:650;color:var(--sand);
+  border:1px solid currentColor;padding:2px 7px;border-radius:99px;letter-spacing:.08em;
+}
+.d-sep{height:1px;background:var(--line);margin:8px 0}
+.d-foot{padding:14px 30px 36px}
+.d-foot .login{
+  width:100%;padding:13px;border-radius:99px;border:1px solid var(--line-2);background:#fff;
+  font-size:13.5px;font-weight:550;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:.3s;box-shadow:var(--shadow-xs);
+}
+.d-foot .login:active{transform:scale(.97)}
+.d-foot .ver{text-align:center;font-size:10.5px;color:var(--faint);margin-top:14px;font-weight:450;letter-spacing:.04em}
+
+/* ============================================================
+   BOTTOM SHEET — salah status
+============================================================ */
+.sheet{
+  position:absolute;left:0;right:0;bottom:0;z-index:50;background:var(--bg);
+  border-radius:30px 30px 0 0;max-height:86%;display:flex;flex-direction:column;
+  transform:translateY(104%);transition:transform .6s var(--ease-sheet);
+  box-shadow:var(--shadow-float);
+}
+.sheet.show{transform:none}
+.grab{width:36px;height:4px;border-radius:99px;background:var(--line-2);margin:14px auto 2px;flex-shrink:0;cursor:pointer}
+.sh-head{padding:14px 30px 6px}
+.sh-head h3{font-size:21px;font-weight:600;letter-spacing:-.025em}
+.sh-head p{font-size:13px;color:var(--muted);margin-top:4px;font-weight:450}
+.sh-head p b{color:var(--accent-deep);font-weight:600}
+.sh-today{
+  margin:18px 30px 0;display:flex;align-items:flex-start;
+  padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.sh-cell{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px}
+.sh-cell span{font-size:9.5px;font-weight:550;color:var(--faint);letter-spacing:.03em}
+.sh-div{width:1px;background:var(--line);align-self:stretch;margin:0 8px}
+.sh-dot{
+  width:36px;height:36px;border-radius:50%;border:1.5px solid var(--line-2);background:#fff;
+  display:flex;align-items:center;justify-content:center;color:var(--faint);transition:.4s var(--spring);
+}
+.sh-dot:active{transform:scale(.82)}
+.sh-dot.home{border-color:var(--sand);background:var(--sand-soft);color:var(--sand)}
+.sh-dot.masjid{border-color:var(--accent);background:var(--accent);color:#fff}
+.sh-dot.fast{border-color:var(--lavender);background:var(--lavender);color:#fff}
+.sh-dot.pop{animation:pop .5s var(--spring)}
+.legend{display:flex;gap:18px;justify-content:center;padding:14px 0 4px}
+.legend span{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:500;color:var(--muted)}
+.lg{width:9px;height:9px;border-radius:50%}
+.lg.g1{background:var(--accent)}
+.lg.g2{background:var(--sand)}
+.lg.g3{border:1.5px solid var(--line-2);background:#fff}
+.sh-scroll{flex:1;overflow-y:auto;padding:6px 30px 40px;scrollbar-width:none}
+.sh-month{display:flex;align-items:baseline;gap:8px;margin:16px 0 6px}
+.sh-month b{font-size:15px;font-weight:600;letter-spacing:-.02em}
+.sh-month span{font-size:11.5px;color:var(--muted);font-weight:450}
+.mrow{
+  display:flex;align-items:center;padding:13px 0;border-bottom:1px solid var(--line);
+}
+.mrow:last-child{border-bottom:0}
+.mrow .d{width:74px;flex-shrink:0}
+.mrow .d b{display:block;font-size:13px;font-weight:550;letter-spacing:-.01em}
+.mrow .d span{font-size:10.5px;color:var(--faint);font-weight:450}
+.mrow .dots{display:flex;gap:8px;margin-left:auto;align-items:center}
+.mdot{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--line-2);background:#fff}
+.mdot.masjid{background:var(--accent);border-color:var(--accent)}
+.mdot.home{background:var(--sand);border-color:var(--sand)}
+.mfast{
+  display:flex;align-items:center;color:var(--faint);margin-left:12px;padding-left:12px;
+  border-left:1px solid var(--line);
+}
+.mfast.on{color:var(--lavender)}
+
+/* ============================================================
+   CALENDAR
+============================================================ */
+.cal-month{display:flex;align-items:center;margin:8px 28px 0;padding:10px 0}
+.cal-month .arrow{
+  width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:var(--muted);transition:.3s var(--spring);
+}
+.cal-month .arrow:active{transform:scale(.85);background:var(--line)}
+.cal-month .d-mid{flex:1;text-align:center}
+.cal-month .d-mid b{display:block;font-size:15px;font-weight:600;letter-spacing:-.02em}
+.cal-month .d-mid span{font-size:11.5px;color:var(--muted);font-weight:450;margin-top:2px;display:block}
+.cal-wrap{padding:4px 20px 120px}
+.cal-hd{
+  display:grid;grid-template-columns:46px repeat(6,1fr);
+  padding:12px 8px 10px;text-align:center;position:sticky;top:0;background:var(--bg);z-index:2;
+  border-bottom:1px solid var(--line-2);
+}
+.cal-hd .caps{font-size:9px;letter-spacing:.1em}
+.cal-row{
+  display:grid;grid-template-columns:46px repeat(6,1fr);align-items:center;
+  padding:10px 8px;text-align:center;border-bottom:1px solid var(--line);
+}
+.cal-row:last-child{border-bottom:0}
+.cal-row .day{display:flex;flex-direction:column;align-items:center;gap:1px}
+.cal-row .day b{
+  width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums;
+}
+.cal-row .day span{font-size:8.5px;font-weight:550;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
+.cal-row.today .day b{background:var(--ink);color:#fff}
+.cal-row .c{font-size:12px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.cal-row .c small{display:block;font-size:10px;font-weight:450;color:var(--faint);margin-top:1px}
+.cal-row.today .c{color:var(--accent-deep)}
+.cal-row.today .c small{color:var(--accent)}
+.cal-key{display:flex;justify-content:center;gap:18px;margin:14px 0 2px;font-size:10.5px;font-weight:500;color:var(--muted)}
+.cal-key i{font-style:normal;color:var(--ink);font-weight:600}
+
+/* ============================================================
+   REMINDERS
+============================================================ */
+.rem-list{padding:2px 28px 120px}
+.rem-card{border-bottom:1px solid var(--line)}
+.rem-card:last-child{border-bottom:0}
+.rem-top{display:flex;align-items:center;gap:15px;padding:17px 0;width:100%}
+.rem-top .ri{
+  width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  border:1.5px solid var(--accent);color:var(--accent-deep);background:var(--accent-soft);transition:.35s;
+}
+.rem-card.off .ri{border-color:var(--line-2);color:var(--faint);background:#fff}
+.rem-top .meta{flex:1}
+.rem-top .meta b{display:block;font-size:14.5px;font-weight:550;letter-spacing:-.01em}
+.rem-top .meta span{font-size:11.5px;color:var(--muted);font-weight:450;margin-top:2px;display:block}
+.rem-top .chev{color:var(--faint);transition:transform .4s var(--spring);display:flex}
+.rem-card.openx .chev{transform:rotate(180deg)}
+.rem-body{max-height:0;overflow:hidden;transition:max-height .5s var(--ease-out)}
+.rem-card.openx .rem-body{max-height:200px}
+.rem-inner{padding:0 0 14px}
+.rem-line{display:flex;align-items:center;gap:12px;padding:9px 0 9px 53px}
+.rem-line .meta{flex:1}
+.rem-line .meta b{font-size:13px;font-weight:550;display:block;letter-spacing:-.01em}
+.rem-line .meta span{font-size:11px;color:var(--muted);font-weight:450}
+.toggle{
+  width:44px;height:26px;border-radius:99px;background:var(--line-2);position:relative;
+  transition:.35s;flex-shrink:0;
+}
+.toggle::after{
+  content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;
+  box-shadow:0 1px 4px rgba(28,42,48,.2);transition:.35s var(--spring);
+}
+.toggle.on{background:var(--accent)}
+.toggle.on::after{transform:translateX(18px)}
+.stepper{display:flex;align-items:center;border:1px solid var(--line-2);border-radius:99px;background:#fff}
+.stepper button{
+  width:32px;height:30px;font-size:16px;font-weight:500;color:var(--ink-2);
+  display:flex;align-items:center;justify-content:center;transition:.2s var(--spring);
+}
+.stepper button:active{transform:scale(.8)}
+.stepper .val{font-size:12px;font-weight:600;min-width:52px;text-align:center;font-variant-numeric:tabular-nums}
+
+/* ============================================================
+   REGISTER MASJID
+============================================================ */
+.reg-intro{padding:18px 28px 4px}
+.reg-intro .tag{
+  display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--accent-deep);
+  background:var(--accent-soft);padding:6px 12px;border-radius:99px;
+}
+.reg-intro h2{font-size:27px;font-weight:600;letter-spacing:-.03em;line-height:1.15;margin:14px 0 8px}
+.reg-intro h2 em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--accent)}
+.reg-intro p{font-size:13.5px;color:var(--muted);line-height:1.55;font-weight:450;max-width:300px}
+.reg-form{padding:6px 28px 150px}
+.fgroup{margin-top:22px}
+.fgroup label{display:block}
+.frow{display:flex;gap:24px}
+.frow .fgroup{flex:1;min-width:0}
+.finput{
+  width:100%;margin-top:2px;padding:10px 0 11px;font-size:15px;font-weight:450;
+  border:0;border-bottom:1px solid var(--line-2);transition:border-color .3s;letter-spacing:-.01em;
+  border-radius:0;appearance:none;-webkit-appearance:none;background:transparent;outline:none;
+  font-family:inherit;
+}
+.finput::placeholder{color:var(--faint)}
+.finput:focus{border-bottom-color:var(--accent)}
+select.finput{
+  color:var(--ink);cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23BCC7CB' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 2px center;
+}
+select.finput.empty{color:var(--faint)}
+.upl{
+  margin-top:14px;width:100%;border:1.5px dashed var(--line-2);border-radius:18px;
+  padding:15px 16px;display:flex;gap:13px;align-items:center;background:#fff;
+  transition:.35s var(--ease-out);text-align:left;
+}
+.upl:active{transform:scale(.98)}
+.upl .ui{
+  width:38px;height:38px;border-radius:12px;background:var(--bg);color:var(--muted);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.35s;
+}
+.upl .meta{flex:1;min-width:0}
+.upl .meta b{display:block;font-size:13.5px;font-weight:550;letter-spacing:-.01em}
+.upl .meta span{display:block;font-size:11.5px;color:var(--muted);font-weight:450;margin-top:2px}
+.upl .act{font-size:12px;font-weight:600;color:var(--accent-deep);flex-shrink:0}
+.upl.done{border-style:solid;border-color:var(--accent);background:var(--accent-soft)}
+.upl.done .ui{background:var(--accent);color:#fff}
+.upl.done .act{color:var(--accent-deep)}
+.chk-row{display:flex;align-items:flex-start;gap:11px;margin-top:26px;cursor:pointer}
+.chk{
+  width:21px;height:21px;border-radius:7px;border:1.5px solid var(--line-2);background:#fff;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;
+  transition:.3s var(--spring);margin-top:1px;
+}
+.chk svg{opacity:0;transform:scale(.3);transition:.25s var(--spring)}
+.chk.on{background:var(--ink);border-color:var(--ink)}
+.chk.on svg{opacity:1;transform:scale(1)}
+.chk-row p{font-size:12.5px;color:var(--muted);font-weight:450;line-height:1.5}
+.chk-row p a{color:var(--accent-deep);font-weight:550;text-decoration:none;border-bottom:1px solid var(--accent-soft)}
+.cta.sent{background:var(--accent);pointer-events:none}
+
+/* ============================================================
+   SETTINGS
+============================================================ */
+.set-list{padding:2px 28px 130px}
+.srow{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+.srow.last{border-bottom:0}
+.srow .meta{flex:1;min-width:0}
+.srow .meta b{display:block;font-size:14.5px;font-weight:550;letter-spacing:-.01em}
+.srow .meta span{display:block;font-size:11.5px;color:var(--muted);font-weight:450;margin-top:2px;line-height:1.45}
+.srow .val{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--muted);flex-shrink:0}
+.srow .val .chev{color:var(--faint);display:flex}
+button.srow{width:100%;text-align:left;transition:.2s}
+button.srow:active{opacity:.5}
+.note{
+  display:flex;gap:10px;align-items:flex-start;margin:14px 0 4px;
+  background:var(--sand-soft);border-radius:14px;padding:12px 14px;
+}
+.note svg{flex-shrink:0;color:var(--sand);margin-top:1px}
+.note p{font-size:11.5px;color:#8A6A45;font-weight:450;line-height:1.5}
+.seg{display:flex;background:#fff;border:1px solid var(--line-2);border-radius:99px;padding:3px;flex-shrink:0}
+.seg button{
+  padding:6px 13px;border-radius:99px;font-size:12px;font-weight:550;color:var(--muted);
+  transition:.3s var(--spring);
+}
+.seg button.on{background:var(--ink);color:#fff}
+.vol{display:flex;gap:7px;align-items:center}
+.vol button{
+  width:13px;height:13px;border-radius:50%;border:1.5px solid var(--line-2);background:#fff;
+  transition:.25s var(--spring);padding:0;
+}
+.vol button:active{transform:scale(.8)}
+.vol button.fill{background:var(--accent);border-color:var(--accent)}
+.set-ver{text-align:center;font-size:10.5px;color:var(--faint);font-weight:500;letter-spacing:.08em;margin-top:26px}
+
+/* ============================================================
+   FEEDBACK & SHARE
+============================================================ */
+.fb-wrap{padding:10px 28px 130px}
+.fb-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.fb-chip{
+  padding:9px 16px;border-radius:99px;font-size:13px;font-weight:550;color:var(--muted);
+  background:#fff;border:1px solid var(--line-2);transition:.3s var(--spring);
+}
+.fb-chip:active{transform:scale(.94)}
+.fb-chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.ftextarea{
+  width:100%;margin-top:14px;padding:16px 18px;font:inherit;font-size:14.5px;font-weight:450;
+  background:#fff;border:1px solid var(--line-2);border-radius:18px;resize:none;outline:none;
+  min-height:130px;color:var(--ink);transition:.3s;letter-spacing:-.01em;line-height:1.55;
+}
+.ftextarea::placeholder{color:var(--faint)}
+.ftextarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.fb-cta{margin-top:18px}
+.share-wrap{padding:26px 28px 130px;text-align:center}
+.share-wrap .bm{
+  width:64px;height:64px;margin:18px auto 0;
+  display:flex;align-items:center;justify-content:center;
+}
+.share-wrap h2{font-size:27px;font-weight:600;letter-spacing:-.03em;margin-top:18px}
+.share-wrap h2 em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--accent)}
+.share-wrap>p{font-size:13.5px;color:var(--muted);font-weight:450;line-height:1.55;max-width:270px;margin:10px auto 0}
+.qr{
+  width:148px;height:148px;margin:26px auto 0;background:#fff;border:1px solid var(--line-2);
+  border-radius:22px;padding:18px;
+}
+.qr svg{display:block;width:100%;height:100%}
+.share-link{
+  margin:22px auto 0;display:flex;align-items:center;gap:10px;max-width:280px;
+  background:#fff;border:1px solid var(--line-2);border-radius:99px;padding:7px 8px 7px 18px;
+}
+.share-link span{flex:1;font-size:13px;font-weight:500;color:var(--ink-2);text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.share-link button{
+  font-size:12px;font-weight:600;color:#fff;background:var(--ink);border-radius:99px;
+  padding:8px 15px;transition:.3s var(--spring);flex-shrink:0;
+}
+.share-link button:active{transform:scale(.93)}
+.share-cta{max-width:280px;margin:14px auto 0}
+.share-foot{font-size:11px;color:var(--faint);font-weight:500;margin-top:18px;letter-spacing:.04em}
+
+/* toast */
+.toast{
+  position:absolute;left:50%;bottom:106px;transform:translateX(-50%) translateY(16px) scale(.95);z-index:70;
+  background:var(--ink);color:#fff;font-size:12.5px;font-weight:500;padding:11px 20px;border-radius:99px;
+  opacity:0;transition:.45s var(--spring);pointer-events:none;white-space:nowrap;
+  box-shadow:0 16px 40px rgba(28,42,48,.3);letter-spacing:-.01em;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+.toast .tk{color:#8FD8B5}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="screen">
+
+    <div class="statusbar">
+      <span>9:41</span>
+      <svg width="62" height="13" viewBox="0 0 64 13" fill="currentColor"><rect x="0" y="5" width="3" height="8" rx="1"/><rect x="5" y="3.5" width="3" height="9.5" rx="1"/><rect x="10" y="1.5" width="3" height="11.5" rx="1"/><rect x="15" y="0" width="3" height="13" rx="1"/><path d="M28 4.5a8.5 8.5 0 0 1 11 0l-1.6 1.9a6 6 0 0 0-7.8 0L28 4.5zm2.8 3.2a4.2 4.2 0 0 1 5.4 0l-1.6 1.9a1.8 1.8 0 0 0-2.2 0l-1.6-1.9zM33.5 12l1.4-1.7a.6.6 0 0 0-2.8 0L33.5 12z"/><rect x="44" y="1" width="17" height="11" rx="3.5" fill="none" stroke="currentColor" stroke-opacity=".35"/><rect x="46" y="3" width="11" height="7" rx="1.8"/><path d="M62.5 4.5v4a2.2 2.2 0 0 0 0-4z" fill-opacity=".35"/></svg>
+    </div>
+
+    <!-- ================= WELCOME ================= -->
+    <section class="view active" id="v-welcome">
+      <div class="scroll st">
+        <div class="hero-pad">
+          <div class="brandrow">
+            <div class="bm"><img src="logo-mm.png" alt="My Masjid"></div>
+            <span>My Masjid</span>
+          </div>
+          <div class="salam">Assalamu alaikum</div>
+          <h2>Your masjid,<br>always <em>with you.</em></h2>
+          <p class="sub">Live Adhan &amp; Iqamah times from 2,000+ masjids across 70 countries.</p>
+        </div>
+        <div class="search">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#B9C6BF" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="countrySearch" placeholder="Search country or masjid">
+        </div>
+        <button class="locate">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+          Use my location
+        </button>
+        <div class="caps section-caps">Browse by country</div>
+        <div class="country-list" id="countryList"></div>
+      </div>
+    </section>
+
+    <!-- ================= MASJID PICKER ================= -->
+    <section class="view" id="v-masjids">
+      <div class="appbar">
+        <button class="icon-btn" data-go="v-welcome">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="title">Denmark</div>
+      </div>
+      <div class="search" style="margin:10px 28px 0">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#B9C6BF" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input placeholder="Search by name or city">
+      </div>
+      <div class="caps section-caps">64 masjids</div>
+      <div class="scroll">
+        <div class="masjid-list st" id="masjidList"></div>
+      </div>
+      <div class="cta-dock">
+        <button class="cta" id="ctaSelect" data-go="v-home">
+          Continue
+        </button>
+      </div>
+    </section>
+
+    <!-- ================= HOME ================= -->
+    <section class="view" id="v-home">
+      <div class="home-bar">
+        <button class="icon-btn" id="openDrawer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7.5h16M4 12h11M4 16.5h16"/></svg>
+        </button>
+        <div class="where">
+          <span class="caps">Your masjid</span>
+          <b>Masjid Al Noor
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B9C6BF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 10 5 5 5-5"/></svg>
+          </b>
+        </div>
+        <button class="icon-btn bell-dot" data-go="v-rem">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9a6 6 0 1 0-12 0c0 6-2.5 7-2.5 7h17S18 15 18 9z"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg>
+        </button>
+      </div>
+
+      <div class="scroll st">
+        <!-- tracker -->
+        <div class="tracker">
+          <div class="t-head">
+            <span class="caps">Today’s salah</span>
+            <span class="count" id="trkCount">0/5</span>
+            <button data-go="sheet">View all
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+            </button>
+          </div>
+          <div class="t-nodes" id="trkNodes"></div>
+        </div>
+
+        <!-- countdown -->
+        <div class="cd-block">
+          <span class="caps">Fajr adhan in</span>
+          <div class="cd-big" id="cdTime">1<span class="sep">:</span>09<span class="sep">:</span>50</div>
+          <div class="cd-sub">Adhan <b>3:11</b> · Odense, Denmark</div>
+          <div class="cd-track">
+            <div class="fill" id="cdFill" style="width:75%"></div>
+            <div class="dot" id="cdDot" style="left:75%"></div>
+          </div>
+          <div class="cd-stats">
+            <div class="cd-stat"><span class="caps">Adhan</span><div class="v">3:11</div></div>
+            <div class="cd-stat"><span class="caps">Iqamah</span><div class="v">4:00</div></div>
+            <div class="cd-stat"><span class="caps">Shuruq</span><div class="v">4:31</div></div>
+          </div>
+        </div>
+
+        <!-- date -->
+        <div class="date-row">
+          <button class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <div class="d-mid">
+            <b>25 Dhul Hijjah 1447</b>
+            <span>Thursday 11 June · Today</span>
+          </div>
+          <button class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg></button>
+        </div>
+
+        <!-- prayer rows -->
+        <div class="ptable">
+          <div class="p-cols"><span class="caps">Salah</span><span class="caps">Adhan</span><span class="caps">Iqamah</span></div>
+          <div class="prow now">
+            <span class="nm"><span class="mark"></span>Fajr</span><span class="tm"><b>3:11</b></span><span class="tm"><b>4:00</b></span>
+          </div>
+          <div class="prow">
+            <span class="nm"><span class="mark"></span>Zuhr</span><span class="tm"><b>13:23</b></span><span class="tm">14:00</span>
+          </div>
+          <div class="prow">
+            <span class="nm"><span class="mark"></span>Asr</span><span class="tm"><b>17:52</b></span><span class="tm">20:30</span>
+          </div>
+          <div class="prow">
+            <span class="nm"><span class="mark"></span>Maghrib</span><span class="tm"><b>22:06</b></span><span class="tm">22:06</span>
+          </div>
+          <div class="prow">
+            <span class="nm"><span class="mark"></span>Isha</span><span class="tm"><b>23:16</b></span><span class="tm">23:20</span>
+          </div>
+          <div class="prow dim">
+            <span class="nm"><span class="mark"></span>Shuruq</span><span class="tm">4:31</span><span class="tm">—</span>
+          </div>
+          <div class="prow dim">
+            <span class="nm"><span class="mark"></span>Jumu’ah</span><span class="tm">13:30</span><span class="tm">14:00</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= CALENDAR ================= -->
+    <section class="view" id="v-cal">
+      <div class="appbar">
+        <button class="icon-btn" data-go="v-home">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="title">Calendar</div>
+        <button class="icon-btn">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="6" r="2.3"/><circle cx="18" cy="18" r="2.3"/><path d="m8.2 10.8 7.6-3.6M8.2 13.2l7.6 3.6"/></svg>
+        </button>
+      </div>
+      <div class="cal-month">
+        <button class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="d-mid">
+          <b>June 2026</b>
+          <span>Dhul Hijjah — Muharram 1447/48</span>
+        </div>
+        <button class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg></button>
+      </div>
+      <div class="scroll">
+        <div class="cal-key st"><span><i>3:11</i>&nbsp;Adhan</span><span><i style="color:var(--accent-deep)">4:00</i>&nbsp;Iqamah</span></div>
+        <div class="cal-wrap st" id="calTable">
+          <div class="cal-hd"><span class="caps">Day</span><span class="caps">Fajr</span><span class="caps">Shuruq</span><span class="caps">Zuhr</span><span class="caps">Asr</span><span class="caps">Maghrib</span><span class="caps">Isha</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= REMINDERS ================= -->
+    <section class="view" id="v-rem">
+      <div class="appbar">
+        <button class="icon-btn" data-go="v-home">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="title">Reminders</div>
+      </div>
+      <div class="caps section-caps" style="margin-top:10px">Per-salah notifications</div>
+      <div class="scroll">
+        <div class="rem-list st" id="remList"></div>
+      </div>
+    </section>
+
+    <!-- ================= FEEDBACK ================= -->
+    <section class="view" id="v-fb">
+      <div class="appbar">
+        <button class="icon-btn" data-go="v-home">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="title">Feedback</div>
+      </div>
+      <div class="scroll">
+        <div class="fb-wrap st">
+          <div class="reg-intro" style="padding:8px 0 0">
+            <h2>How can we <em>improve?</em></h2>
+            <p>Your feedback goes straight to the team — every message is read.</p>
+          </div>
+          <div class="caps" style="margin-top:26px">Topic</div>
+          <div class="fb-chips" id="fbChips">
+            <button class="fb-chip on">Idea</button>
+            <button class="fb-chip">Bug</button>
+            <button class="fb-chip">Prayer times</button>
+            <button class="fb-chip">Praise</button>
+            <button class="fb-chip">Other</button>
+          </div>
+          <div class="caps" style="margin-top:26px">Message</div>
+          <textarea class="ftextarea" id="fbText" placeholder="Tell us what’s on your mind…"></textarea>
+          <div class="fgroup">
+            <label class="caps" style="letter-spacing:.08em;text-transform:none;font-size:11px;color:var(--muted)">Email · optional, if you’d like a reply</label>
+            <input class="finput" type="email" placeholder="you@example.com">
+          </div>
+          <button class="cta fb-cta" id="fbSend">Send feedback</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SHARE APP ================= -->
+    <section class="view" id="v-share">
+      <div class="appbar">
+        <button class="icon-btn" data-go="v-home">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="title">Share app</div>
+      </div>
+      <div class="scroll">
+        <div class="share-wrap st">
+          <div class="bm"><img src="logo-mm.png" alt="My Masjid"></div>
+          <h2>Share the <em>khayr.</em></h2>
+          <p>Help someone never miss a salah — the app is free, forever, for everyone.</p>
+          <div class="qr"><svg id="qrSvg" viewBox="0 0 21 21"></svg></div>
+          <div class="share-link">
+            <span>my-masjid.com/app</span>
+            <button id="copyLink">Copy</button>
+          </div>
+          <button class="cta share-cta" id="shareBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/></svg>
+            Share with friends
+          </button>
+          <div class="share-foot">SCAN THE CODE OR SEND THE LINK</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SETTINGS ================= -->
+    <section class="view" id="v-set">
+      <div class="appbar">
+        <button class="icon-btn" data-go="v-home">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="title">Settings</div>
+      </div>
+      <div class="scroll">
+        <div class="set-list st">
+          <div class="caps" style="margin-top:18px">Sound</div>
+          <div class="srow">
+            <span class="meta"><b>Adhan sound</b><span>Salah 8s · plays at adhan time</span></span>
+            <button class="toggle on" id="setAdhan"></button>
+          </div>
+          <div class="srow" id="adhanExtras">
+            <span class="meta"><b>Volume</b><span>Adhan playback level</span></span>
+            <span class="vol" id="volDots"></span>
+          </div>
+          <div class="srow">
+            <span class="meta"><b>Iqamah sound</b><span>Buzz shortly before jama’ah</span></span>
+            <button class="toggle" id="setIqamah"></button>
+          </div>
+          <div class="note">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+            <p>Praying in the masjid? Keep sounds off on your phone so it stays silent during salah.</p>
+          </div>
+
+          <div class="caps" style="margin-top:30px">Display</div>
+          <button class="srow" id="dispMode">
+            <span class="meta"><b>Display mode</b><span>How the app presents times</span></span>
+            <span class="val"><span id="dispVal">Timing</span>
+              <span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg></span>
+            </span>
+          </button>
+          <div class="srow">
+            <span class="meta"><b>Theme</b></span>
+            <span class="seg" data-seg="theme">
+              <button class="on">Light</button><button>Dark</button><button>Auto</button>
+            </span>
+          </div>
+          <div class="srow">
+            <span class="meta"><b>Time format</b></span>
+            <span class="seg" data-seg="time">
+              <button class="on">24h</button><button>12h</button>
+            </span>
+          </div>
+
+          <div class="caps" style="margin-top:30px">Dates</div>
+          <div class="srow">
+            <span class="meta"><b>Hijri date adjustment</b><span>Match your masjid’s moon sighting</span></span>
+            <span class="stepper">
+              <button id="hijMinus">−</button>
+              <span class="val" id="hijVal" style="min-width:56px;justify-content:center;font-weight:600;color:var(--ink)">0 days</span>
+              <button id="hijPlus">+</button>
+            </span>
+          </div>
+
+          <div class="caps" style="margin-top:30px">General</div>
+          <button class="srow" data-go="v-rem">
+            <span class="meta"><b>Reminders</b><span>Per-salah notifications</span></span>
+            <span class="val">5 on
+              <span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg></span>
+            </span>
+          </button>
+          <button class="srow">
+            <span class="meta"><b>Language</b></span>
+            <span class="val">English
+              <span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg></span>
+            </span>
+          </button>
+
+          <div class="caps" style="margin-top:30px">About</div>
+          <button class="srow">
+            <span class="meta"><b>Rate the app</b></span>
+            <span class="val"><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg></span></span>
+          </button>
+          <button class="srow">
+            <span class="meta"><b>Contact support</b></span>
+            <span class="val"><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg></span></span>
+          </button>
+          <button class="srow last">
+            <span class="meta"><b>Privacy policy</b></span>
+            <span class="val"><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg></span></span>
+          </button>
+
+          <div class="set-ver">BUILD 4.9.7 · MY MASJID</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= REGISTER MASJID ================= -->
+    <section class="view" id="v-reg">
+      <div class="appbar">
+        <button class="icon-btn" data-go="v-home">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="title">Register masjid</div>
+      </div>
+      <div class="scroll">
+        <div class="st">
+          <div class="reg-intro">
+            <span class="tag">Free · For mosques only</span>
+            <h2>Bring your masjid <em>online.</em></h2>
+            <p>List your masjid and share exact Adhan &amp; Iqamah times with your community — on phones and big screens.</p>
+          </div>
+          <div class="reg-form">
+            <div class="caps" style="margin-top:24px">Masjid details</div>
+            <div class="fgroup">
+              <label class="caps" style="letter-spacing:.08em;text-transform:none;font-size:11px;color:var(--muted)">Masjid name *</label>
+              <input class="finput" placeholder="e.g. Masjid Al Noor">
+            </div>
+            <div class="fgroup">
+              <label class="caps" style="letter-spacing:.08em;text-transform:none;font-size:11px;color:var(--muted)">Street address *</label>
+              <input class="finput" placeholder="Street and number">
+            </div>
+            <div class="frow">
+              <div class="fgroup">
+                <label class="caps" style="letter-spacing:.08em;text-transform:none;font-size:11px;color:var(--muted)">Postal code *</label>
+                <input class="finput" placeholder="0000">
+              </div>
+              <div class="fgroup">
+                <label class="caps" style="letter-spacing:.08em;text-transform:none;font-size:11px;color:var(--muted)">City *</label>
+                <input class="finput" placeholder="City">
+              </div>
+            </div>
+            <div class="frow">
+              <div class="fgroup">
+                <label class="caps" style="letter-spacing:.08em;text-transform:none;font-size:11px;color:var(--muted)">Country *</label>
+                <select class="finput empty" id="regCountry">
+                  <option value="" selected>Choose country</option>
+                  <option>Denmark</option><option>United Kingdom</option><option>Sweden</option>
+                  <option>Germany</option><option>United States</option><option>Norway</option>
+                </select>
+              </div>
+              <div class="fgroup">
+                <label class="caps" style="letter-spacing:.08em;text-transform:none;font-size:11px;color:var(--muted)">State</label>
+                <input class="finput" placeholder="Optional">
+              </div>
+            </div>
+
+            <div class="caps" style="margin-top:34px">Contact</div>
+            <div class="fgroup">
+              <label class="caps" style="letter-spacing:.08em;text-transform:none;font-size:11px;color:var(--muted)">Phone number *</label>
+              <input class="finput" type="tel" placeholder="+45 …">
+            </div>
+            <div class="fgroup">
+              <label class="caps" style="letter-spacing:.08em;text-transform:none;font-size:11px;color:var(--muted)">Email *</label>
+              <input class="finput" type="email" placeholder="masjid@example.com">
+            </div>
+
+            <div class="caps" style="margin-top:34px">Attachments <span style="text-transform:none;letter-spacing:0;font-weight:450">· optional, we can ask later</span></div>
+            <button class="upl" data-upl="logo">
+              <span class="ui">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.8-3.8a1.5 1.5 0 0 0-2.1 0L7 19"/></svg>
+              </span>
+              <span class="meta"><b>Masjid logo</b><span>JPG or PNG · max 1 MB · high resolution</span></span>
+              <span class="act">Attach</span>
+            </button>
+            <button class="upl" data-upl="sheet">
+              <span class="ui">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg>
+              </span>
+              <span class="meta"><b>Salah timing sheet</b><span>XLSX, CSV or PDF · max 1 MB · full year</span></span>
+              <span class="act">Attach</span>
+            </button>
+
+            <div class="chk-row" id="regAgree">
+              <span class="chk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+              <p>I agree to the <a>privacy policy</a> and confirm I represent this masjid.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cta-dock">
+        <button class="cta" id="regSubmit">Submit registration</button>
+      </div>
+    </section>
+
+    <!-- ================= FLOATING NAV (global) ================= -->
+    <nav class="bottomnav hide" id="bottomnav">
+      <button class="bn" data-go="v-home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>
+        Home
+      </button>
+      <button class="bn" data-go="v-cal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+        Calendar
+      </button>
+      <button class="bn" data-go="sheet">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7 10 17l-4-4"/></svg>
+        Tracker
+      </button>
+      <button class="bn" data-go="v-rem">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9a6 6 0 1 0-12 0c0 6-2.5 7-2.5 7h17S18 15 18 9z"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg>
+        Reminders
+      </button>
+    </nav>
+
+    <!-- ================= DRAWER ================= -->
+    <div class="scrim" id="scrimDrawer"></div>
+    <aside class="drawer" id="drawer">
+      <div class="d-head">
+        <div class="bm"><img src="logo-mm.png" alt="My Masjid"></div>
+        <b>My Masjid</b>
+        <p>2,000+ masjids · 70 countries</p>
+      </div>
+      <button class="d-masjid">
+        <div class="m-avatar">AN</div>
+        <div class="meta">
+          <b>Masjid Al Noor</b>
+          <span>Change masjid →</span>
+        </div>
+      </button>
+      <nav class="d-items" id="drawerItems"></nav>
+      <div class="d-foot">
+        <button class="login">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4M10 17l5-5-5-5M15 12H3"/></svg>
+          Log in / Sign up
+        </button>
+        <div class="ver">VERSION 4.0 · FREE FOREVER</div>
+      </div>
+    </aside>
+
+    <!-- ================= SALAH SHEET ================= -->
+    <div class="scrim" id="scrimSheet"></div>
+    <div class="sheet" id="sheet">
+      <div class="grab"></div>
+      <div class="sh-head">
+        <h3>My salah status</h3>
+        <p>Today <b id="shCount">0/5 salah</b> · <span id="shDetail">0 in masjid, 0 at home · not fasting</span></p>
+      </div>
+      <div class="sh-today" id="shToday"></div>
+      <div class="legend">
+        <span><i class="lg g1"></i>In masjid</span>
+        <span><i class="lg g2"></i>At home</span>
+        <span><i class="lg g3"></i>Missed</span>
+      </div>
+      <div class="sh-scroll">
+        <div class="sh-month"><b>Dhul Hijjah 1447</b><span id="moSum">5/150 salah · 0 fasting</span></div>
+        <div id="monthRows"></div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+
+<script>
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const MOSQUE='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20v-7.2C7 9.2 9.6 7.3 12 5c2.4 2.3 5 4.2 5 7.8V20"/><path d="M12 5V2.8"/><path d="M4.5 20h15"/><path d="M10 20v-2a2 2 0 0 1 4 0v2"/></svg>';
+const HOME='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>';
+const MOON='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 13.6A8.4 8.4 0 1 1 10.4 3.5a6.8 6.8 0 0 0 10.1 10.1z"/></svg>';
+
+/* ---------- navigation ---------- */
+let current='v-welcome';
+function go(id){
+  if(id==='sheet'){openSheet();return}
+  if(id==='drawer'){if(current!=='v-home')showView('v-home');setTimeout(openDrawer,current==='v-home'?0:380);return}
+  showView(id);
+}
+function showView(id){
+  if(id===current){syncChips(id);return}
+  closeDrawer();closeSheet();
+  $('#'+current).classList.remove('active');
+  const inn=$('#'+id);
+  inn.classList.add('active');
+  inn.querySelector('.scroll')?.scrollTo(0,0);
+  current=id;
+  syncChips(id);syncNav(id);
+}
+function syncChips(id){$$('.chip').forEach(c=>c.classList.toggle('on',c.dataset.go===id))}
+function syncNav(id){
+  $('#bottomnav').classList.toggle('hide',id==='v-welcome'||id==='v-masjids'||id==='v-reg');
+  $$('.bn').forEach(b=>b.classList.toggle('on',b.dataset.go===id));
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-go]');
+  if(t)go(t.dataset.go);
+});
+
+/* ---------- toast ---------- */
+let toastTimer;
+function toast(msg){
+  const t=$('#toast');t.innerHTML=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2100);
+}
+
+/* ---------- welcome: countries ---------- */
+const countries=[
+  ['🇩🇰','Denmark','64 masjids'],['🇬🇧','United Kingdom','312 masjids'],['🇸🇪','Sweden','89 masjids'],
+  ['🇩🇪','Germany','176 masjids'],['🇺🇸','United States','241 masjids'],['🇳🇴','Norway','47 masjids'],
+  ['🇨🇦','Canada','118 masjids'],['🇦🇺','Australia','73 masjids'],['🇧🇪','Belgium','38 masjids'],
+  ['🇳🇱','Netherlands','56 masjids'],
+];
+$('#countryList').innerHTML=countries.map(([f,n,c])=>`
+  <button class="row-line" data-go="v-masjids" data-name="${n.toLowerCase()}">
+    <span class="flag">${f}</span>
+    <span class="meta"><b>${n}</b><span>${c}</span></span>
+    <span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg></span>
+  </button>`).join('');
+$('#countrySearch').addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase();
+  $$('#countryList .row-line').forEach(c=>c.style.display=c.dataset.name.includes(q)?'':'none');
+});
+
+/* ---------- masjid picker ---------- */
+const masjids=[
+  ['Masjid Al Noor','Pakistan Islamic Welfare Society · Odense','AN'],
+  ['Odense Central Mosque','Dansk Islamisk Trossamfund · Odense','OC'],
+  ['Masjid Al-Furqan','Islamic Cultural Center · Copenhagen','AF'],
+  ['Aarhus Grand Mosque','Fællesforeningen · Aarhus','AG'],
+  ['Masjid At-Taqwa','Muslim Youth Denmark · Aalborg','AT'],
+];
+$('#masjidList').innerHTML=masjids.map(([n,org,init],i)=>`
+  <button class="m-row${i===0?' sel':''}" data-i="${i}">
+    <div class="m-avatar">${init}</div>
+    <div class="meta">
+      <b>${n}</b>
+      <span>${org}</span>
+    </div>
+    <div class="radio"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+  </button>`).join('');
+$$('#masjidList .m-row').forEach(card=>{
+  card.addEventListener('click',()=>{
+    $$('#masjidList .m-row').forEach(c=>c.classList.remove('sel'));
+    card.classList.add('sel');
+  });
+});
+$('#ctaSelect').addEventListener('click',()=>{
+  setTimeout(()=>toast('<span class="tk">✓</span>&nbsp; Masjid Al Noor is now your masjid'),550);
+});
+
+/* ---------- tracker (0=none,1=home,2=masjid) ---------- */
+const PRAYERS=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+const state=[0,0,0,0,0];
+let fasting=false;
+
+function nodeIcon(v){return v===2?MOSQUE:v===1?HOME:''}
+function renderTracker(){
+  $('#trkNodes').innerHTML=PRAYERS.map((p,i)=>`
+    ${i?`<div class="t-link${state[i-1]&&state[i]?' fill':''}"></div>`:''}
+    <div class="t-node">
+      <button class="t-dot ${state[i]===2?'masjid':state[i]===1?'home':''}" data-trk="${i}">${nodeIcon(state[i])}</button>
+      <span class="${state[i]?'done-lbl':''}">${p}</span>
+    </div>`).join('');
+  $('#trkCount').textContent=`${state.filter(Boolean).length}/5`;
+}
+function renderSheetToday(){
+  $('#shToday').innerHTML=PRAYERS.map((p,i)=>`
+    <div class="sh-cell">
+      <button class="sh-dot ${state[i]===2?'masjid':state[i]===1?'home':''}" data-trk="${i}">${nodeIcon(state[i])}</button>
+      <span>${p}</span>
+    </div>`).join('')+`
+    <div class="sh-div"></div>
+    <div class="sh-cell">
+      <button class="sh-dot ${fasting?'fast':''}" id="fastBtn">${MOON}</button>
+      <span>Fast</span>
+    </div>`;
+  const done=state.filter(Boolean).length;
+  const inM=state.filter(v=>v===2).length, atH=state.filter(v=>v===1).length;
+  $('#shCount').textContent=`${done}/5 salah`;
+  $('#shDetail').textContent=`${inM} in masjid, ${atH} at home · ${fasting?'fasting':'not fasting'}`;
+}
+document.addEventListener('click',e=>{
+  const d=e.target.closest('[data-trk]');
+  if(d){
+    const i=+d.dataset.trk;
+    state[i]=(state[i]+1)%3;
+    renderTracker();renderSheetToday();
+    document.querySelectorAll(`[data-trk="${i}"]`).forEach(el=>{
+      el.classList.add('pop');setTimeout(()=>el.classList.remove('pop'),510);
+    });
+    if(state[i]===1)toast(`${PRAYERS[i]} — prayed at home`);
+    else if(state[i]===2)toast(`${PRAYERS[i]} — prayed in masjid`);
+  }
+  if(e.target.closest('#fastBtn')){
+    fasting=!fasting;renderSheetToday();
+    if(fasting)toast('Fasting today — may it be accepted');
+  }
+});
+renderTracker();
+
+/* ---------- countdown ---------- */
+let secs=1*3600+9*60+50;
+const TOTAL=4*3600;
+function tick(){
+  secs=Math.max(0,secs-1);
+  const h=Math.floor(secs/3600),m=Math.floor(secs%3600/60),s=secs%60;
+  $('#cdTime').innerHTML=`${h}<span class="sep">:</span>${String(m).padStart(2,'0')}<span class="sep">:</span>${String(s).padStart(2,'0')}`;
+  const pct=(1-secs/TOTAL)*100;
+  $('#cdFill').style.width=pct+'%';
+  $('#cdDot').style.left=pct+'%';
+}
+tick();setInterval(tick,1000);
+
+/* ---------- drawer ---------- */
+const drawerItems=[
+  ['Favorite masajid','<path d="m12 3 2.7 5.6 6.3.9-4.5 4.4 1 6.1L12 17.2 6.5 20l1-6.1L3 9.5l6.3-.9z"/>',''],
+  ['Yearly prayer calendar','<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/','v-cal'],
+  ['Reminders','<path d="M18 9a6 6 0 1 0-12 0c0 6-2.5 7-2.5 7h17S18 15 18 9z"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/','v-rem'],
+  ['Settings','<circle cx="12" cy="12" r="3.2"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/','v-set'],
+  ['SEP'],
+  ['Feedback','<path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.3 9 9 0 0 1-3.8-.8L3 20l1.1-5A8 8 0 0 1 3.5 11.5 8.4 8.4 0 0 1 12 3.2a8.4 8.4 0 0 1 9 8.3z"/','v-fb'],
+  ['Share app','<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 10.8 7.6-3.6M8.2 13.2l7.6 3.6"/','v-share'],
+  ['Register your masjid','<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/','v-reg','NEW'],
+  ['Privacy policy','<path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/',''],
+];
+$('#drawerItems').innerHTML=drawerItems.map(it=>{
+  if(it[0]==='SEP')return'<div class="d-sep"></div>';
+  const[n,icon,goto,bdg]=it;
+  return`
+  <button class="d-item" ${goto?`data-go="${goto}"`:''}>
+    <span class="di"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${icon}</svg></span>
+    ${n}
+    ${bdg?`<span class="bdg">${bdg}</span>`:''}
+  </button>`}).join('');
+
+function openDrawer(){$('#drawer').classList.add('show');$('#scrimDrawer').classList.add('show');syncChips('drawer')}
+function closeDrawer(){$('#drawer').classList.remove('show');$('#scrimDrawer').classList.remove('show')}
+$('#openDrawer').addEventListener('click',openDrawer);
+$('#scrimDrawer').addEventListener('click',()=>{closeDrawer();syncChips(current)});
+
+/* ---------- sheet ---------- */
+function openSheet(){
+  if(current!=='v-home')showView('v-home');
+  renderSheetToday();
+  setTimeout(()=>{$('#sheet').classList.add('show');$('#scrimSheet').classList.add('show')},current==='v-home'?0:320);
+  syncChips('sheet');syncNav('sheet');
+}
+function closeSheet(){$('#sheet').classList.remove('show');$('#scrimSheet').classList.remove('show')}
+$('#scrimSheet').addEventListener('click',()=>{closeSheet();syncChips(current);syncNav(current)});
+$('.grab').addEventListener('click',()=>{closeSheet();syncChips(current);syncNav(current)});
+
+/* month history */
+const hist=[];
+for(let d=24;d>=13;d--){
+  const greg=d-14;
+  hist.push({h:d,g:`${greg<1?greg+31+' May':greg+' Jun'}`,vals:[0,0,0,0,0],fast:false});
+}
+hist[1].vals=[2,2,1,2,2];hist[1].fast=true;
+hist[2].vals=[1,2,2,2,2];
+hist[3].vals=[2,2,2,2,2];hist[3].fast=true;
+hist[4].vals=[0,1,1,2,2];
+hist[5].vals=[2,2,2,2,0];
+$('#monthRows').innerHTML=hist.map(r=>`
+  <div class="mrow">
+    <div class="d"><b>${r.h}${ord(r.h)}</b><span>${r.g}</span></div>
+    <div class="dots">
+      ${r.vals.map(v=>`<span class="mdot ${v===2?'masjid':v===1?'home':''}"></span>`).join('')}
+      <span class="mfast ${r.fast?'on':''}">${MOON}</span>
+    </div>
+  </div>`).join('');
+function ord(n){return n%10===1&&n!==11?'st':n%10===2&&n!==12?'nd':n%10===3&&n!==13?'rd':'th'}
+const monthDone=hist.reduce((a,r)=>a+r.vals.filter(Boolean).length,0);
+$('#moSum').textContent=`${monthDone}/150 salah · ${hist.filter(r=>r.fast).length} fasting`;
+
+/* ---------- calendar rows ---------- */
+const cal=[
+  [11,'Thu','3:11|4:00','4:31','13:23|14:00','17:52|20:30','22:06|22:06','23:16|23:20'],
+  [12,'Fri','3:11|4:00','4:30','13:23|14:00','17:52|20:30','22:06|22:06','23:17|23:20'],
+  [13,'Sat','3:11|4:00','4:30','13:23|14:00','17:53|20:30','22:07|22:07','23:18|23:20'],
+  [14,'Sun','3:10|4:00','4:29','13:24|14:00','17:53|20:30','22:08|22:08','23:18|23:20'],
+  [15,'Mon','3:10|4:00','4:29','13:24|14:00','17:54|20:30','22:08|22:08','23:19|23:20'],
+  [16,'Tue','3:10|4:00','4:29','13:24|14:00','17:54|20:30','22:09|22:09','23:19|23:20'],
+  [17,'Wed','3:10|4:00','4:29','13:24|14:00','17:54|20:30','22:10|22:10','23:19|23:20'],
+  [18,'Thu','3:10|4:00','4:29','13:25|14:00','17:55|20:30','22:10|22:10','23:20|23:20'],
+  [19,'Fri','3:10|4:00','4:29','13:25|14:00','17:55|20:30','22:11|22:11','23:20|23:20'],
+  [20,'Sat','3:10|4:00','4:29','13:25|14:00','17:55|20:30','22:11|22:11','23:21|23:20'],
+];
+$('#calTable').insertAdjacentHTML('beforeend',cal.map(r=>`
+  <div class="cal-row${r[0]===11?' today':''}">
+    <span class="day"><b>${r[0]}</b><span>${r[1]}</span></span>
+    ${r.slice(2).map(c=>{
+      const[a,i]=c.split('|');
+      return`<span class="c">${a}${i?`<small>${i}</small>`:'<small>&nbsp;</small>'}</span>`;
+    }).join('')}
+  </div>`).join(''));
+
+/* ---------- reminders ---------- */
+const rems=[
+  ['Fajr','3:11 AM',true,15],['Dhuhr','1:23 PM',true,15],['Asr','5:52 PM',false,15],
+  ['Maghrib','10:06 PM',true,10],['Isha','11:16 PM',true,15],['Jumu’ah','1:30 PM Friday',true,null],
+];
+$('#remList').innerHTML=rems.map(([n,t,on,iq],idx)=>`
+  <div class="rem-card${on?'':' off'}" data-rem="${idx}">
+    <button class="rem-top" data-exp="${idx}">
+      <span class="ri">${MOSQUE}</span>
+      <span class="meta">
+        <b>${n}</b>
+        <span class="rsum">${on?`Adhan on${iq!==null?` · Iqamah ${iq} min before`:''}`:'Notifications off'}</span>
+      </span>
+      <span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 10 5 5 5-5"/></svg></span>
+    </button>
+    <div class="rem-body">
+      <div class="rem-inner">
+        <div class="rem-line">
+          <span class="meta"><b>Adhan alert</b><span>Notify at adhan time · ${t}</span></span>
+          <button class="toggle ${on?'on':''}" data-tgl="${idx}"></button>
+        </div>
+        ${iq!==null?`
+        <div class="rem-line">
+          <span class="meta"><b>Iqamah heads-up</b><span>Before jama’ah starts</span></span>
+          <span class="stepper">
+            <button data-step="-1" data-idx="${idx}">−</button>
+            <span class="val" data-val="${idx}">${iq} min</span>
+            <button data-step="1" data-idx="${idx}">+</button>
+          </span>
+        </div>`:''}
+      </div>
+    </div>
+  </div>`).join('');
+const remState=rems.map(([,,on,iq])=>({on,iq}));
+document.addEventListener('click',e=>{
+  const exp=e.target.closest('[data-exp]');
+  if(exp&&!e.target.closest('.toggle')){
+    exp.closest('.rem-card').classList.toggle('openx');
+  }
+  const tgl=e.target.closest('[data-tgl]');
+  if(tgl){
+    const i=+tgl.dataset.tgl;
+    remState[i].on=!remState[i].on;
+    tgl.classList.toggle('on',remState[i].on);
+    const card=tgl.closest('.rem-card');
+    card.classList.toggle('off',!remState[i].on);
+    card.querySelector('.rsum').textContent=remState[i].on?`Adhan on${remState[i].iq!==null?` · Iqamah ${remState[i].iq} min before`:''}`:'Notifications off';
+  }
+  const upl=e.target.closest('[data-upl]');
+  if(upl){
+    const done=upl.classList.toggle('done');
+    upl.querySelector('.act').textContent=done?'Attached ✓':'Attach';
+    if(done)toast(upl.dataset.upl==='logo'?'Logo attached':'Timing sheet attached');
+  }
+  if(e.target.closest('#regAgree')){
+    $('#regAgree .chk').classList.toggle('on');
+  }
+  const st=e.target.closest('[data-step]');
+  if(st){
+    const i=+st.dataset.idx;
+    remState[i].iq=Math.min(45,Math.max(5,remState[i].iq+5*+st.dataset.step));
+    document.querySelector(`[data-val="${i}"]`).textContent=remState[i].iq+' min';
+    const card=st.closest('.rem-card');
+    if(remState[i].on)card.querySelector('.rsum').textContent=`Adhan on · Iqamah ${remState[i].iq} min before`;
+  }
+});
+
+/* ---------- settings ---------- */
+let vol=3;
+function renderVol(){
+  $('#volDots').innerHTML=Array.from({length:5},(_,i)=>`<button class="${i<vol?'fill':''}" data-vol="${i+1}"></button>`).join('');
+}
+renderVol();
+const DISP=['Timing','Timing + Info','Info'];
+let dispIdx=0;
+document.addEventListener('click',e=>{
+  if(e.target.closest('#setAdhan')){
+    const t=$('#setAdhan');t.classList.toggle('on');
+    $('#adhanExtras').style.opacity=t.classList.contains('on')?'1':'.35';
+    toast(t.classList.contains('on')?'Adhan sound on':'Adhan sound off');
+  }
+  if(e.target.closest('#setIqamah')){
+    const t=$('#setIqamah');t.classList.toggle('on');
+    toast(t.classList.contains('on')?'Iqamah sound on':'Iqamah sound off');
+  }
+  const v=e.target.closest('[data-vol]');
+  if(v){vol=+v.dataset.vol;renderVol()}
+  const seg=e.target.closest('.seg button');
+  if(seg){
+    seg.closest('.seg').querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+    seg.classList.add('on');
+  }
+  if(e.target.closest('#dispMode')){
+    dispIdx=(dispIdx+1)%3;
+    $('#dispVal').textContent=DISP[dispIdx];
+  }
+  if(e.target.closest('#hijMinus')||e.target.closest('#hijPlus')){
+    const d=e.target.closest('#hijPlus')?1:-1;
+    let cur=parseInt($('#hijVal').textContent)||0;
+    cur=Math.max(-2,Math.min(2,cur+d));
+    $('#hijVal').textContent=`${cur>0?'+':''}${cur} day${Math.abs(cur)===1?'':'s'}`;
+  }
+});
+
+/* ---------- feedback ---------- */
+document.addEventListener('click',e=>{
+  const fc=e.target.closest('.fb-chip');
+  if(fc){
+    $$('#fbChips .fb-chip').forEach(c=>c.classList.remove('on'));
+    fc.classList.add('on');
+  }
+});
+$('#fbSend').addEventListener('click',()=>{
+  if(!$('#fbText').value.trim()){toast('Tell us a little more first');$('#fbText').focus();return}
+  $('#fbText').value='';
+  toast('<span class="tk">✓</span>&nbsp; Jazakallah khair — feedback sent');
+  setTimeout(()=>showView('v-home'),1600);
+});
+
+/* ---------- share ---------- */
+(function qr(){
+  let cells='';
+  const finder=(x,y)=>`<rect x="${x}" y="${y}" width="5" height="5" fill="none" stroke="#1B2B25" stroke-width="1"/><rect x="${x+1.5}" y="${y+1.5}" width="2" height="2" fill="#1B2B25"/>`;
+  for(let i=0;i<21;i++)for(let j=0;j<21;j++){
+    const inF=(i<7&&j<7)||(i<7&&j>13)||(i>13&&j<7);
+    if(!inF&&(i*7+j*11+i*j)%5<2)cells+=`<rect x="${j}" y="${i}" width="1" height="1" rx=".2" fill="#1B2B25"/>`;
+  }
+  $('#qrSvg').innerHTML=finder(0.5,0.5)+finder(15.5,0.5)+finder(0.5,15.5)+cells;
+})();
+$('#copyLink').addEventListener('click',()=>toast('<span class="tk">✓</span>&nbsp; Link copied'));
+$('#shareBtn').addEventListener('click',()=>toast('Opening share sheet…'));
+
+/* ---------- fit phone to viewport ---------- */
+function fitPhone(){
+  const scale=Math.min(1,(innerHeight-32)/844,(innerWidth-32)/390);
+  const ph=$('.phone');
+  ph.style.transform=`scale(${scale})`;
+  ph.style.margin=`${-(844-844*scale)/2}px ${-(390-390*scale)/2}px`;
+}
+addEventListener('resize',fitPhone);
+fitPhone();
+
+/* ---------- register masjid ---------- */
+$('#regCountry').addEventListener('change',e=>{
+  e.target.classList.toggle('empty',!e.target.value);
+});
+$('#regSubmit').addEventListener('click',()=>{
+  if(!$('#regAgree .chk').classList.contains('on')){
+    toast('Please agree to the privacy policy first');
+    return;
+  }
+  const btn=$('#regSubmit');
+  btn.classList.add('sent');
+  btn.textContent='✓  Registration sent';
+  toast('<span class="tk">✓</span>&nbsp; Thank you — we’ll review and email you shortly');
+  setTimeout(()=>{btn.classList.remove('sent');btn.textContent='Submit registration';showView('v-home')},2400);
+});
+</script>
+</body>
+</html>
